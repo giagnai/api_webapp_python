@@ -49,14 +49,22 @@ def personas():
         # de la URL
         # limit = ...
         # offset = ....
+        limit_str = str(request.args.get('limit'))
+        offset_str = str(request.args.get('offset'))
 
         # Debe verificar si el limit y offset son válidos cuando
         # no son especificados en la URL
+        if (limit_str is not None) and (limit_str.isdigit()):
+            limit = int(limit_str)
+
+        if (offset_str is not None) and (offset_str.isdigit()):
+            offset = int(offset_str)
 
         # Alumno: Pasarle al metodo report los valores de limit y offset
-        data = persona.report()
+        data = persona.report(limit=limit, offset=offset)
         
-        result = '''<h3>Alumno: Implementar la llamada
+        result = render_template('tabla.html', data=data)
+        '''<h3>Alumno: Implementar la llamada
                     al HTML tabla.html
                     con render_template, recuerde pasar
                     data como parámetro</h3>'''
@@ -81,19 +89,17 @@ def registro():
             name = ""
             age = 0
 
-            return "Alumno --> Realice la implementacion y borre este return"
-
             # Alumno:
             # Obtener del HTTP POST JSON el nombre y la edad
-            # name = ...
-            # age = ...
-
+            name = str(request.form.get('name'))
+            age = str(request.form.get('age'))
+            
             # Alumno: descomentar la linea persona.insert una vez implementado
             # lo anterior:
-            # persona.insert(name, int(age))
+            persona.insert(name, int(age))
             
             # Como respuesta al POST devolvemos la tabla de valores
-            # return redirect(url_for('personas'))
+            return redirect(url_for('personas'))
         except:
             return jsonify({'trace': traceback.format_exc()})
 
@@ -115,11 +121,10 @@ def comparativa():
 
         # Descomentar luego de haber implementado su función en persona.py:
 
-        # x, y = persona.dashboard()
-        # image_html = utils.graficar(x, y)
-        # return Response(image_html.getvalue(), mimetype='image/png')
-
-        return "Alumno --> Realice la implementacion"
+        x, y = persona.dashboard()
+        image_html = utils.graficar(x, y)
+        return Response(image_html.getvalue(), mimetype='image/png')
+        #return "Alumno --> Realice la implementacion"
     except:
         return jsonify({'trace': traceback.format_exc()})
 
